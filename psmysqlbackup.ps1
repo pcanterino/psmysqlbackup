@@ -6,7 +6,7 @@
 [String]$configMysqldumpCli = "C:\Program Files\MariaDB 10.5\bin\mysqldump.exe"
 
 [String]$configBackupDir = "backup"
-[String]$configRotate = 7
+[Int32]$configRotate = 7
 
 function Get-Databases() {
     $databaseString = (& $configMysqlCli --host=$configMysqlHost --user=$configMysqlUser --password=$configMysqlPassword --batch --skip-column-names -e "SHOW DATABASES;")
@@ -17,6 +17,26 @@ function Get-Databases() {
 
 function Create-Backup([String]$database, [String]$target) {
     & $configMysqldumpCli --host=$configMysqlHost --user=$configMysqlUser --password=$configMysqlPassword --single-transaction --result-file=$target $database
+}
+
+function Rotate-Backups($backupDir) {
+    if($configRotate -le 0) {
+		return
+	}
+	
+	$keepBackupsCount = $configRotate
+	
+	Get-ChildItem $backupDir -File | Where-Object {($_.Name -match "^backup-.+-\d{8,}-\d{6}\.sql$")} | Sort-Object -Descending |
+	Foreach-Object {
+		if($keepBackupsCount -ge 0) {
+			$keepBackupsCount--
+		}
+		
+		if($keepBackupsCount -eq -1) {
+			Write-Output "Deleting backup $($_.FullName)"
+			Remove-Item -Force $_.FullName
+		}
+	}
 }
 
 $currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
@@ -33,4 +53,5 @@ foreach($d in $databases) {
     $databaseBackupFile = Join-Path -Path $databaseBackupDir -ChildPath "backup-$d-$currDaytime.sql"
     Write-Output "Backing up $d to $databaseBackupFile..."
     Create-Backup $d $databaseBackupFile
+    Rotate-Backups $databaseBackupDir
 }
