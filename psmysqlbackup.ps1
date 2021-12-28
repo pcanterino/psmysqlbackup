@@ -98,11 +98,10 @@ foreach($d in $databasesToBackup) {
     
     try {
         Create-Backup $d $databaseBackupFile
+        Rotate-Backups $databaseBackupDir
     }
     catch {
         Write-Output "Could not backup database $d to $databaseBackupFile"
         Write-Output $_
     }
-    
-    Rotate-Backups $databaseBackupDir
 }
