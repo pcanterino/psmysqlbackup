@@ -1,4 +1,5 @@
 [String]$configMysqlHost = "localhost"
+[Int32]$configMysqlPort = 3306
 [String]$configMysqlUser = "backup"
 [String]$configMysqlPassword = "backup"
 
@@ -9,14 +10,14 @@
 [Int32]$configRotate = 7
 
 function Get-Databases() {
-    $databaseString = (& $configMysqlCli --host=$configMysqlHost --user=$configMysqlUser --password=$configMysqlPassword --batch --skip-column-names -e "SHOW DATABASES;")
+    $databaseString = (& $configMysqlCli --host=$configMysqlHost --port=$configMysqlPort --user=$configMysqlUser --password=$configMysqlPassword --batch --skip-column-names -e "SHOW DATABASES;")
     $databases = $databaseString.split([Environment]::NewLine)
 
     return $databases
 }
 
 function Create-Backup([String]$database, [String]$target) {
-    & $configMysqldumpCli --host=$configMysqlHost --user=$configMysqlUser --password=$configMysqlPassword --single-transaction --result-file=$target $database
+    & $configMysqldumpCli --host=$configMysqlHost --port=$configMysqlPort --user=$configMysqlUser --password=$configMysqlPassword --single-transaction --result-file=$target $database
 }
 
 function Rotate-Backups($backupDir) {
