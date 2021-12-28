@@ -38,22 +38,22 @@ function Create-Backup([String]$database, [String]$target) {
 
 function Rotate-Backups($backupDir) {
     if($configRotate -le 0) {
-		return
-	}
-	
-	$keepBackupsCount = $configRotate
-	
-	Get-ChildItem $backupDir -File | Where-Object {($_.Name -match "^backup-.+-\d{8,}-\d{6}\.sql$")} | Sort-Object -Descending |
-	Foreach-Object {
-		if($keepBackupsCount -ge 0) {
-			$keepBackupsCount--
-		}
-		
-		if($keepBackupsCount -eq -1) {
-			Write-Output "Deleting backup $($_.FullName)"
-			Remove-Item -Force $_.FullName
-		}
-	}
+        return
+    }
+    
+    $keepBackupsCount = $configRotate
+
+    Get-ChildItem $backupDir -File | Where-Object {($_.Name -match "^backup-.+-\d{8,}-\d{6}\.sql$")} | Sort-Object -Descending |
+    Foreach-Object {
+        if($keepBackupsCount -ge 0) {
+            $keepBackupsCount--
+        }
+        
+        if($keepBackupsCount -eq -1) {
+            Write-Output "Deleting backup $($_.FullName)"
+            Remove-Item -Force $_.FullName
+        }
+    }
 }
 
 $defaultExclusions = @("information_schema", "performance_schema")
