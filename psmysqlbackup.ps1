@@ -1,16 +1,20 @@
-[String]$configMysqlHost = "localhost"
-[Int32]$configMysqlPort = 3306
-[String]$configMysqlUser = "backup"
-[String]$configMysqlPassword = "backup"
+# Config
 
-[String]$configMysqlCli = "C:\Program Files\MariaDB 10.5\bin\mysql.exe"
-[String]$configMysqldumpCli = "C:\Program Files\MariaDB 10.5\bin\mysqldump.exe"
+$configMysqlHost = "localhost"
+$configMysqlPort = 3306
+$configMysqlUser = "backup"
+$configMysqlPassword = "backup"
 
-[String]$configBackupDir = "backup"
-[Int32]$configRotate = 7
+$configMysqlCli = "C:\Program Files\MariaDB 10.5\bin\mysql.exe"
+$configMysqldumpCli = "C:\Program Files\MariaDB 10.5\bin\mysqldump.exe"
+
+$configBackupDir = "backup"
+$configRotate = 7
 
 $configDbBackup = @()
 $configDbExclusions = @("test")
+
+# End of config
 
 $defaultExclusions = @("information_schema", "performance_schema")
 
