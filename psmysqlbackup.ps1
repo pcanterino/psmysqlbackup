@@ -1,3 +1,11 @@
+# PSMySQLBackup
+# PowerShell script for backing up MySQL / MariaDB databases on Windows 
+#
+# Author: Patrick Canterino <patrick@patrick-canterino.de>
+# WWW: https://www.patrick-canterino.de/
+#      https://github.com/pcanterino/dsmonrot
+# License: 2-Clause BSD License
+
 # Config
 
 $configMysqlHost = "localhost"
@@ -48,7 +56,7 @@ function Rotate-Backups($backupDir) {
         if($keepBackupsCount -ge 0) {
             $keepBackupsCount--
         }
-        
+
         if($keepBackupsCount -eq -1) {
             Write-Output "Deleting backup $($_.FullName)"
             Remove-Item -Force $_.FullName
