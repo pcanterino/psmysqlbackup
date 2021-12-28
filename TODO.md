@@ -4,6 +4,9 @@
 - [x] Allow to define exclusions
 - [x] Backup a selection of databases
 - [x] Rotate backups after `n` backups
+- [ ] Error handling
 - [ ] Configuration file
 - [ ] Write log file
 - [ ] Compress backups
+- [ ] Add comments
+- [ ] Add README
