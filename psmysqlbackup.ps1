@@ -9,7 +9,8 @@
 [String]$configBackupDir = "backup"
 [Int32]$configRotate = 7
 
-[String]$configDbExclusions = @("test")
+$configDbBackup = @()
+$configDbExclusions = @("test")
 
 $defaultExclusions = @("information_schema", "performance_schema")
 
@@ -48,7 +49,16 @@ $currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
 
 $databases = Get-Databases | Where-Object {!($_ -in $defaultExclusions -or $_ -in $configDbExclusions)}
 
-foreach($d in $databases) {
+$databasesToBackup = @()
+
+if($configDbBackup -and $configDbBackup.count -gt 0) {
+    $databasesToBackup = $configDbBackup
+}
+else {
+    $databasesToBackup = $databases
+}
+
+foreach($d in $databasesToBackup) {
     $databaseBackupDir = Join-Path -Path $configBackupDir -ChildPath $d
 
     if(!(Test-Path $databaseBackupDir)) {
