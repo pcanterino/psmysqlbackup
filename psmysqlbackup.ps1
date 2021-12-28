@@ -16,10 +16,13 @@ $configDbExclusions = @("test")
 
 # End of config
 
-$defaultExclusions = @("information_schema", "performance_schema")
-
 function Get-Databases() {
     $databaseString = (& $configMysqlCli --host=$configMysqlHost --port=$configMysqlPort --user=$configMysqlUser --password=$configMysqlPassword --batch --skip-column-names -e "SHOW DATABASES;")
+    
+    if($LastExitCode -ne 0) {
+        throw "MySQL CLI exited with Exit code $LastExitCode"
+    }
+    
     $databases = $databaseString.split([Environment]::NewLine)
 
     return $databases
@@ -27,6 +30,10 @@ function Get-Databases() {
 
 function Create-Backup([String]$database, [String]$target) {
     & $configMysqldumpCli --host=$configMysqlHost --port=$configMysqlPort --user=$configMysqlUser --password=$configMysqlPassword --single-transaction --result-file=$target $database
+
+    if($LastExitCode -ne 0) {
+        throw "mysqldump exited with Exit code $LastExitCode"
+    }
 }
 
 function Rotate-Backups($backupDir) {
@@ -49,9 +56,18 @@ function Rotate-Backups($backupDir) {
 	}
 }
 
+$defaultExclusions = @("information_schema", "performance_schema")
+
 $currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
 
-$databases = Get-Databases | Where-Object {!($_ -in $defaultExclusions -or $_ -in $configDbExclusions)}
+try {
+    $databases = Get-Databases | Where-Object {!($_ -in $defaultExclusions -or $_ -in $configDbExclusions)}
+}
+catch {
+    Write-Output "Failed to get list of databases"
+    Write-Output $_
+    exit 1
+}
 
 $databasesToBackup = @()
 
@@ -71,6 +87,14 @@ foreach($d in $databasesToBackup) {
 
     $databaseBackupFile = Join-Path -Path $databaseBackupDir -ChildPath "backup-$d-$currDaytime.sql"
     Write-Output "Backing up $d to $databaseBackupFile..."
-    Create-Backup $d $databaseBackupFile
+    
+    try {
+        Create-Backup $d $databaseBackupFile
+    }
+    catch {
+        Write-Output "Could not backup database $d to $databaseBackupFile"
+        Write-Output $_
+    }
+    
     Rotate-Backups $databaseBackupDir
 }
