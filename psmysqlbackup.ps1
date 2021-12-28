@@ -9,6 +9,10 @@
 [String]$configBackupDir = "backup"
 [Int32]$configRotate = 7
 
+[String]$configDbExclusions = @("test")
+
+$defaultExclusions = @("information_schema", "performance_schema")
+
 function Get-Databases() {
     $databaseString = (& $configMysqlCli --host=$configMysqlHost --port=$configMysqlPort --user=$configMysqlUser --password=$configMysqlPassword --batch --skip-column-names -e "SHOW DATABASES;")
     $databases = $databaseString.split([Environment]::NewLine)
@@ -42,7 +46,7 @@ function Rotate-Backups($backupDir) {
 
 $currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
 
-$databases = Get-Databases | Where-Object { $_ -ne "information_schema" -and $_ -ne "performance_schema"}
+$databases = Get-Databases | Where-Object {!($_ -in $defaultExclusions -or $_ -in $configDbExclusions)}
 
 foreach($d in $databases) {
     $databaseBackupDir = Join-Path -Path $configBackupDir -ChildPath $d
