@@ -20,7 +20,7 @@ $configBackupDir = "backup"
 $configRotate = 7
 
 $configDbBackup = @()
-$configDbExclusions = @("test")
+$configDbExclude = @("test")
 
 # End of config
 
@@ -64,12 +64,12 @@ function Rotate-Backups($backupDir) {
     }
 }
 
-$defaultExclusions = @("information_schema", "performance_schema")
+$defaultDbExclude = @("information_schema", "performance_schema")
 
 $currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
 
 try {
-    $databases = Get-Databases | Where-Object {!($_ -in $defaultExclusions -or $_ -in $configDbExclusions)}
+    $databases = Get-Databases | Where-Object {!($_ -in $defaultDbExclude -or $_ -in $configDbExclude)}
 }
 catch {
     Write-Output "Failed to get list of databases"
