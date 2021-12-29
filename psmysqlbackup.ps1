@@ -3,7 +3,7 @@
 #
 # Author: Patrick Canterino <patrick@patrick-canterino.de>
 # WWW: https://www.patrick-canterino.de/
-#      https://github.com/pcanterino/dsmonrot
+#      https://github.com/pcanterino/psmysqlbackup
 # License: 2-Clause BSD License
 
 # Config
