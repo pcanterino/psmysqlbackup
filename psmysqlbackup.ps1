@@ -80,7 +80,14 @@ catch {
 $databasesToBackup = @()
 
 if($configDbBackup -and $configDbBackup.count -gt 0) {
-    $databasesToBackup = $configDbBackup
+    foreach($cDb in $configDbBackup) {
+        if($cDb -in $databases) {
+            $databasesToBackup += $cDb
+        }
+        else {
+            Write-Warning "Not backing up database $cDb, because it does not exist"
+        }
+    }
 }
 else {
     $databasesToBackup = $databases
