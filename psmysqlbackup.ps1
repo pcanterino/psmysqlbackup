@@ -21,6 +21,7 @@ $configRotate = 7
 
 $configDbBackup = @()
 $configDbExclude = @("test")
+$configDbExcludePattern = @()
 
 # End of config
 
@@ -69,7 +70,7 @@ $defaultDbExclude = @("information_schema", "performance_schema")
 $currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
 
 try {
-    $databases = Get-Databases | Where-Object {!($_ -in $defaultDbExclude -or $_ -in $configDbExclude)}
+    $databases = Get-Databases | Where-Object {!($_ -in $defaultDbExclude)}
 }
 catch {
     Write-Output "Failed to get list of databases"
@@ -90,7 +91,19 @@ if($configDbBackup -and $configDbBackup.count -gt 0) {
     }
 }
 else {
-    $databasesToBackup = $databases
+    :excludeOuter foreach($rDb in $databases) {
+        if($rDb -in $configDbExclude) {
+            continue;
+        }
+
+        foreach($cPattern in $configDbExcludePattern) {
+            if($rDb -match $cPattern) {
+                continue excludeOuter;
+            }
+        }
+
+        $databasesToBackup += $rDb
+    }
 }
 
 foreach($d in $databasesToBackup) {
