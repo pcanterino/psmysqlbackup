@@ -2,7 +2,7 @@
 
 PSMySQLBackup is a script for backing up MySQL / MariaDB databases on Windows using [`mysqldump`](https://mariadb.com/kb/en/mysqldump/).
 
-PSMySQLBackup stands for **P**owerShell **MySQL** **backup** or **P**atrick's **s**imple **MySQL** **backup**.
+PSMySQLBackup stands for **P**ower**S**hell **MySQL** **backup** or **P**atrick's **s**imple **MySQL** **backup**.
 
 ## Requirements
 

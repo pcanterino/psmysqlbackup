@@ -91,7 +91,8 @@ if($configDbBackup -and $configDbBackup.count -gt 0) {
     }
 }
 else {
-    :excludeOuter foreach($rDb in $databases) {
+    :excludeOuter
+    foreach($rDb in $databases) {
         if($rDb -in $configDbExclude) {
             continue;
         }
