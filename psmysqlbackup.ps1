@@ -111,7 +111,14 @@ foreach($d in $databasesToBackup) {
     $databaseBackupDir = Join-Path -Path $configBackupDir -ChildPath $d
 
     if(!(Test-Path $databaseBackupDir)) {
-        New-Item -ItemType directory -Path $databaseBackupDir -ErrorAction Stop | Out-Null
+        try {
+            New-Item -ItemType directory -Path "$databaseBackupDir" -ErrorAction Stop | Out-Null
+        }
+        catch {
+            Write-Output "Failed to create directory $databaseBackupDir"
+            Write-Output $_
+            exit 1
+        }
     }
 
     $databaseBackupFile = Join-Path -Path $databaseBackupDir -ChildPath "backup-$d-$currDaytime.sql"
