@@ -8,19 +8,30 @@
 
 # Config
 
+# MySQL host
 $configMysqlHost = "localhost"
+# Port of MySQL host
 $configMysqlPort = 3306
+# MySQL user using to connect to MySQL
 $configMysqlUser = "backup"
+# Password for MySQL user
 $configMysqlPassword = "backup"
 
+# Path to MySQL CLI program
 $configMysqlCli = "C:\Program Files\MariaDB 10.5\bin\mysql.exe"
+# Path to mysqldump CLI program
 $configMysqldumpCli = "C:\Program Files\MariaDB 10.5\bin\mysqldump.exe"
 
+# Directory where to store the backups
 $configBackupDir = "backup"
+# Number of backups to keep, set to 0 to keep all backups
 $configRotate = 7
 
+# Databases to backup, leave empty to backup all databases
 $configDbBackup = @()
+# If $configDbBackup is empty, don't backup the databases defined here
 $configDbExclude = @("test")
+# If $configDbBackup is empty, don't backup the databases matching these patterns
 $configDbExcludePattern = @()
 
 # End of config
@@ -69,6 +80,7 @@ $defaultDbExclude = @("information_schema", "performance_schema")
 
 $currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
 
+# Get a list of all databases
 try {
     $databases = Get-Databases | Where-Object {!($_ -in $defaultDbExclude)}
 }
@@ -77,6 +89,8 @@ catch {
     Write-Output $_
     exit 1
 }
+
+# Create a list of databases to backup
 
 $databasesToBackup = @()
 
@@ -107,6 +121,7 @@ else {
     }
 }
 
+# Iterate over the list of databases and back them up and rotate the backups
 foreach($d in $databasesToBackup) {
     $databaseBackupDir = Join-Path -Path $configBackupDir -ChildPath $d
 
