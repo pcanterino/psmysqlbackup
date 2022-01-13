@@ -7,6 +7,7 @@
 - [x] Allow to define exclusions based on regular expressions
 - [ ] Error handling
 - [ ] Configuration file
+- [ ] Pass configuration file by command line
 - [ ] Write log file
 - [ ] Compress backups
 - [ ] Add comments
