@@ -27,7 +27,9 @@ $configBackupDir = "backup"
 # Number of backups to keep, set to 0 to keep all backups
 $configRotate = 7
 
+# Directory where to store the logfiles
 $configLogDir = "log"
+# Number of logfiles to keep, set to 0 to keep all logfiles
 $configLogRotate = 7
 
 # Databases to backup, leave empty to backup all databases
