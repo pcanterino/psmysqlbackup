@@ -30,6 +30,7 @@ $configRotate = 7
 # Directory where to store the logfiles
 $configLogDir = "log"
 # Number of logfiles to keep, set to 0 to keep all logfiles
+# You should set this to at least the same as $configRotate
 $configLogRotate = 7
 
 # Databases to backup, leave empty to backup all databases
@@ -303,6 +304,8 @@ foreach($d in $databasesToBackup) {
         Write-Output $_
     }
 }
+
+Invoke-FileRotation -Dir $configLogDir -MaxFiles $configLogRotate -Pattern "^log-\d{8,}-\d{6}\.log$" -LogFile $logFile
 
 $endTime = Get-Date -format "yyyy-MM-dd HH:mm:ss"
 Write-Log "Ended at $endTime" -Path $logFile
