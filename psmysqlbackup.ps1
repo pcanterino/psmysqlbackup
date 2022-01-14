@@ -176,23 +176,34 @@ function Create-Backup([String]$database, [String]$target) {
         throw "mysqldump exited with Exit code $LastExitCode"
     }
 }
+function Invoke-FileRotation {
+    Param (
+        $Dir,
+        $MaxFiles,
+        [Parameter(Mandatory=$false)]
+        $Pattern,
+        [Parameter(Mandatory=$false)]
+        $LogFile
+    )
 
-function Rotate-Backups($backupDir) {
-    if($configRotate -le 0) {
+    if($MaxFiles -le 0) {
         return
     }
-    
-    $keepBackupsCount = $configRotate
 
-    Get-ChildItem $backupDir -File | Where-Object {($_.Name -match "^backup-.+-\d{8,}-\d{6}\.sql$")} | Sort-Object -Descending |
+    $keepFilesCount = $MaxFiles
+
+    Get-ChildItem $Dir -File | Where-Object {($null -eq $Pattern -or $_.Name -match $Pattern)} | Sort-Object -Descending |
     Foreach-Object {
-        if($keepBackupsCount -ge 0) {
-            $keepBackupsCount--
+        if($keepFilesCount -ge 0) {
+            $keepFilesCount--
         }
 
-        if($keepBackupsCount -eq -1) {
-            Write-Output "Deleting backup $($_.FullName)"
-            #Write-Log "Deleting backup $($_.FullName)"
+        if($keepFilesCount -eq -1) {
+            Write-Output "Deleting file $($_.FullName)"
+            
+            if($null -ne $LogFile) {
+                Write-Log "Deleting file $($_.FullName)" -Path $LogFile
+            }
 
             Remove-Item -Force $_.FullName
         }
@@ -282,7 +293,7 @@ foreach($d in $databasesToBackup) {
     
     try {
         Create-Backup $d $databaseBackupFile
-        Rotate-Backups $databaseBackupDir
+        Invoke-FileRotation -Dir $databaseBackupDir -MaxFiles $configRotate -Pattern "^backup-.+-\d{8,}-\d{6}\.sql$" -LogFile $logFile
     }
     catch {
         Write-Log "Could not backup database $d to $databaseBackupFile" -Path $logFile -Level Error
