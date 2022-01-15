@@ -8,7 +8,7 @@
 - [ ] Error handling
 - [ ] Configuration file
 - [ ] Pass configuration file by command line
-- [ ] Write log file
+- [x] Write log file
 - [ ] Compress backups
 - [ ] Add comments
 - [ ] Add README
