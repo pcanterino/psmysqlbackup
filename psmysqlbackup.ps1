@@ -200,8 +200,6 @@ function Invoke-FileRotation {
         }
 
         if($keepFilesCount -eq -1) {
-            Write-Output "Deleting file $($_.FullName)"
-            
             if($null -ne $LogFile) {
                 Write-Log "Deleting file $($_.FullName)" -Path $LogFile
             }
@@ -232,9 +230,6 @@ catch {
     Write-Log $_ -Path $logFile -Level Error
     Write-Log "Exiting" -Path $logFile -Level Error
 
-    Write-Output "Failed to get list of databases"
-    Write-Output $_
-
     exit 1
 }
 
@@ -249,7 +244,6 @@ if($configDbBackup -and $configDbBackup.count -gt 0) {
         }
         else {
             Write-Log "Not backing up database $cDb, because it does not exist" -Path $logFile -Level Warn
-            Write-Warning "Not backing up database $cDb, because it does not exist"
         }
     }
 }
@@ -283,9 +277,6 @@ foreach($d in $databasesToBackup) {
             Write-Log $_ -Path $logFile -Level Error
             Write-Log "Exiting" -Path $logFile -Level Error
 
-            Write-Output "Failed to create directory $databaseBackupDir"
-            Write-Output $_
-
             exit 1
         }
     }
@@ -293,7 +284,6 @@ foreach($d in $databasesToBackup) {
     $databaseBackupFile = Join-Path -Path $databaseBackupDir -ChildPath "backup-$d-$currDaytime.sql"
 
     Write-Log "Backing up $d to $databaseBackupFile..." -Path $logFile
-    Write-Output "Backing up $d to $databaseBackupFile..."
     
     try {
         Create-Backup $d $databaseBackupFile
@@ -302,9 +292,6 @@ foreach($d in $databasesToBackup) {
     catch {
         Write-Log "Could not backup database $d to $databaseBackupFile" -Path $logFile -Level Error
         Write-Log $_ -Path $logFile -Level Error
-
-        Write-Output "Could not backup database $d to $databaseBackupFile"
-        Write-Output $_
     }
 }
 
