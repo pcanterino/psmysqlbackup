@@ -25,12 +25,12 @@ $configMysqldumpCli = "C:\Program Files\MariaDB 10.5\bin\mysqldump.exe"
 # Directory where to store the backups
 $configBackupDir = "backup"
 # Number of backups to keep, set to 0 to keep all backups
-$configRotate = 7
+$configBackupRotate = 7
 
 # Directory where to store the logfiles
 $configLogDir = "log"
 # Number of logfiles to keep, set to 0 to keep all logfiles
-# You should set this to at least the same as $configRotate
+# You should set this to at least the same as $configBackupRotate
 $configLogRotate = 7
 
 # Databases to backup, leave empty to backup all databases
@@ -297,7 +297,7 @@ foreach($d in $databasesToBackup) {
     
     try {
         Create-Backup $d $databaseBackupFile
-        Invoke-FileRotation -Dir $databaseBackupDir -MaxFiles $configRotate -Pattern $patternBackupFile -LogFile $logFile
+        Invoke-FileRotation -Dir $databaseBackupDir -MaxFiles $configBackupRotate -Pattern $patternBackupFile -LogFile $logFile
     }
     catch {
         Write-Log "Could not backup database $d to $databaseBackupFile" -Path $logFile -Level Error
