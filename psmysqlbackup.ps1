@@ -213,6 +213,9 @@ function Invoke-FileRotation {
 
 $defaultDbExclude = @("information_schema", "performance_schema")
 
+$patternBackupFile = "^backup-.+-\d{8,}-\d{6}\.sql$"
+$patternLogFile = "^log-\d{8,}-\d{6}\.log$"
+
 $currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
 
 $logFile = "$configLogDir\log-$currDaytime.log"
@@ -294,7 +297,7 @@ foreach($d in $databasesToBackup) {
     
     try {
         Create-Backup $d $databaseBackupFile
-        Invoke-FileRotation -Dir $databaseBackupDir -MaxFiles $configRotate -Pattern "^backup-.+-\d{8,}-\d{6}\.sql$" -LogFile $logFile
+        Invoke-FileRotation -Dir $databaseBackupDir -MaxFiles $configRotate -Pattern $patternBackupFile -LogFile $logFile
     }
     catch {
         Write-Log "Could not backup database $d to $databaseBackupFile" -Path $logFile -Level Error
@@ -305,7 +308,7 @@ foreach($d in $databasesToBackup) {
     }
 }
 
-Invoke-FileRotation -Dir $configLogDir -MaxFiles $configLogRotate -Pattern "^log-\d{8,}-\d{6}\.log$" -LogFile $logFile
+Invoke-FileRotation -Dir $configLogDir -MaxFiles $configLogRotate -Pattern $patternLogFile -LogFile $logFile
 
 $endTime = Get-Date -format "yyyy-MM-dd HH:mm:ss"
 Write-Log "Ended at $endTime" -Path $logFile
