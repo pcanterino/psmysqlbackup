@@ -9,26 +9,26 @@
 # Config
 
 # MySQL host
-$configMysqlHost = "localhost"
+$configMysqlHost = 'localhost'
 # Port of MySQL host
 $configMysqlPort = 3306
 # MySQL user using to connect to MySQL
-$configMysqlUser = "backup"
+$configMysqlUser = 'backup'
 # Password for MySQL user
-$configMysqlPassword = "backup"
+$configMysqlPassword = 'backup'
 
 # Path to MySQL CLI program
-$configMysqlCli = "C:\Program Files\MariaDB 10.5\bin\mysql.exe"
+$configMysqlCli = 'C:\Program Files\MariaDB 10.5\bin\mysql.exe'
 # Path to mysqldump CLI program
-$configMysqldumpCli = "C:\Program Files\MariaDB 10.5\bin\mysqldump.exe"
+$configMysqldumpCli = 'C:\Program Files\MariaDB 10.5\bin\mysqldump.exe'
 
 # Directory where to store the backups
-$configBackupDir = "backup"
+$configBackupDir = 'backup'
 # Number of backups to keep, set to 0 to keep all backups
 $configBackupRotate = 7
 
 # Directory where to store the logfiles
-$configLogDir = "log"
+$configLogDir = 'log'
 # Number of logfiles to keep, set to 0 to keep all logfiles
 # You should set this to at least the same as $configBackupRotate
 $configLogRotate = 7
@@ -36,7 +36,7 @@ $configLogRotate = 7
 # Databases to backup, leave empty to backup all databases
 $configDbBackup = @()
 # If $configDbBackup is empty, don't backup the databases defined here
-$configDbExclude = @("test")
+$configDbExclude = @('test')
 # If $configDbBackup is empty, don't backup the databases matching these patterns
 $configDbExcludePattern = @()
 
@@ -209,16 +209,16 @@ function Invoke-FileRotation {
     }
 }
 
-$defaultDbExclude = @("information_schema", "performance_schema")
+$defaultDbExclude = @('information_schema', 'performance_schema')
 
-$patternBackupFile = "^backup-.+-\d{8,}-\d{6}\.sql$"
-$patternLogFile = "^log-\d{8,}-\d{6}\.log$"
+$patternBackupFile = '^backup-.+-\d{8,}-\d{6}\.sql$'
+$patternLogFile = '^log-\d{8,}-\d{6}\.log$'
 
-$currDaytime = Get-Date -format "yyyyMMdd-HHmmss"
+$currDaytime = Get-Date -format 'yyyyMMdd-HHmmss'
 
 $logFile = "$configLogDir\log-$currDaytime.log"
 
-$startTime = Get-Date -format "yyyy-MM-dd HH:mm:ss"
+$startTime = Get-Date -format 'yyyy-MM-dd HH:mm:ss'
 Write-Log "Started at $startTime" -Path $logFile
 
 # Get a list of all databases
@@ -226,9 +226,9 @@ try {
     $databases = Get-Databases | Where-Object {!($_ -in $defaultDbExclude)}
 }
 catch {
-    Write-Log "Failed to get list of databases" -Path $logFile -Level Error
+    Write-Log 'Failed to get list of databases' -Path $logFile -Level Error
     Write-Log $_ -Path $logFile -Level Error
-    Write-Log "Exiting" -Path $logFile -Level Error
+    Write-Log 'Exiting' -Path $logFile -Level Error
 
     exit 1
 }
@@ -275,7 +275,7 @@ foreach($d in $databasesToBackup) {
         catch {
             Write-Log "Failed to create directory $databaseBackupDir" -Path $logFile -Level Error
             Write-Log $_ -Path $logFile -Level Error
-            Write-Log "Exiting" -Path $logFile -Level Error
+            Write-Log 'Exiting' -Path $logFile -Level Error
 
             exit 1
         }
@@ -297,5 +297,5 @@ foreach($d in $databasesToBackup) {
 
 Invoke-FileRotation -Dir $configLogDir -MaxFiles $configLogRotate -Pattern $patternLogFile -LogFile $logFile
 
-$endTime = Get-Date -format "yyyy-MM-dd HH:mm:ss"
+$endTime = Get-Date -format 'yyyy-MM-dd HH:mm:ss'
 Write-Log "Ended at $endTime" -Path $logFile
