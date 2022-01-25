@@ -18,9 +18,9 @@ $configMysqlUser = 'backup'
 $configMysqlPassword = 'backup'
 
 # Path to MySQL CLI program
-$configMysqlCli = 'C:\Program Files\MariaDB 10.5\bin\mysql.exe'
+$configMysqlCli = 'mysql.exe'
 # Path to mysqldump CLI program
-$configMysqldumpCli = 'C:\Program Files\MariaDB 10.5\bin\mysqldump.exe'
+$configMysqldumpCli = 'mysqldump.exe'
 
 # Directory where to store the backups
 $configBackupDir = 'backup'
