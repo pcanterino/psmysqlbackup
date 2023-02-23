@@ -27,6 +27,9 @@ $configBackupDir = 'backup'
 # Number of backups to keep, set to 0 to keep all backups
 $configBackupRotate = 7
 
+# Compress backups (limited to 2 GB due to usage of Compress-Archive)
+$configBackupCompress = $False
+
 # Directory where to store the logfiles
 $configLogDir = 'log'
 # Number of logfiles to keep, set to 0 to keep all logfiles
@@ -176,6 +179,11 @@ function Create-Backup([String]$database, [String]$target) {
     if($LastExitCode -ne 0) {
         throw "mysqldump exited with Exit code $LastExitCode"
     }
+
+    if($configBackupCompress) {
+        Compress-Archive -Path $target -DestinationPath "$target.zip"
+        Remove-Item -Path $target
+    }
 }
 function Invoke-FileRotation {
     Param (
@@ -211,7 +219,7 @@ function Invoke-FileRotation {
 
 $defaultDbExclude = @('information_schema', 'performance_schema')
 
-$patternBackupFile = '^backup-.+-\d{8,}-\d{6}\.sql$'
+$patternBackupFile = '^backup-.+-\d{8,}-\d{6}\.sql(\.zip)?$'
 $patternLogFile = '^log-\d{8,}-\d{6}\.log$'
 
 $currDaytime = Get-Date -format 'yyyyMMdd-HHmmss'
@@ -283,7 +291,12 @@ foreach($d in $databasesToBackup) {
 
     $databaseBackupFile = Join-Path -Path $databaseBackupDir -ChildPath "backup-$d-$currDaytime.sql"
 
-    Write-Log "Backing up $d to $databaseBackupFile..." -Path $logFile
+    if($configBackupCompress) {
+        Write-Log "Backing up $d to compressed file $databaseBackupFile.zip..." -Path $logFile
+    }
+    else {
+        Write-Log "Backing up $d to $databaseBackupFile..." -Path $logFile
+    }
     
     try {
         Create-Backup $d $databaseBackupFile

@@ -9,6 +9,6 @@
 - [ ] Configuration file
 - [ ] Pass configuration file by command line
 - [x] Write log file
-- [ ] Compress backups
+- [x] Compress backups
 - [ ] Add comments
 - [ ] Add README
