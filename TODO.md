@@ -10,5 +10,6 @@
 - [ ] Pass configuration file by command line
 - [x] Write log file
 - [x] Compress backups
+- [ ] Optionally compress backups using 7-Zip's CLI (to overcome limitations of `Compress-Archive`)
 - [ ] Add comments
 - [ ] Add README
