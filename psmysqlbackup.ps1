@@ -173,7 +173,7 @@ function Get-Databases() {
     return $databases
 }
 
-function Create-Backup([String]$database, [String]$target) {
+function Invoke-DatabaseBackup([String]$database, [String]$target) {
     & $configMysqldumpCli --host=$configMysqlHost --port=$configMysqlPort --user=$configMysqlUser --password=$configMysqlPassword --single-transaction --result-file=$target $database
 
     if($LastExitCode -ne 0) {
@@ -299,7 +299,7 @@ foreach($d in $databasesToBackup) {
     }
     
     try {
-        Create-Backup $d $databaseBackupFile
+        Invoke-DatabaseBackup $d $databaseBackupFile
         Invoke-FileRotation -Dir $databaseBackupDir -MaxFiles $configBackupRotate -Pattern $patternBackupFile -LogFile $logFile
     }
     catch {
